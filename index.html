@@ -82,7 +82,7 @@
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Weight</p>
                         <h3 id="kpiWeight" class="text-2xl font-bold text-gray-900 mt-1">...</h3>
-                        <p class="text-xs text-gray-500 mt-0.5">Metric Tonnes (MT)</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Million Tonnes (MT)</p>
                     </div>
                     <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl">
                         <i class="fa-solid fa-weight-hanging text-xl"></i>
@@ -195,6 +195,7 @@
     <script>
         // Your validated direct Google Sheets dynamic data link
         const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTlx1GHySCwIHBiXWpfaR6UM1Alu_TKKoUX0-VI1J2ggVl35pTgqjOiNFIL0F93VF9LIddmn3XPfnhw/pub?gid=1521176462&single=true&output=csv';
+
 
         let rawData = [];
         let filteredData = [];
@@ -320,11 +321,11 @@
 
             const avgLoad = totalWagons > 0 ? (totalWeight / totalWagons) : 0;
 
-            document.getElementById('kpiWeight').innerText = Math.round(totalWeight).toLocaleString();
+            document.getElementById('kpiWeight').innerText = totalWeight.toFixed(4);
             document.getElementById('kpiWagons').innerText = totalWagons.toLocaleString();
             document.getElementById('kpiNTKM').innerText = Math.round(totalNTKM).toLocaleString();
             document.getElementById('kpiStations').innerText = activeStations.size.toLocaleString();
-            document.getElementById('kpiAvgLoad').innerText = avgLoad.toFixed(2);
+            document.getElementById('kpiAvgLoad').innerText = avgLoad.toFixed(4);
         }
 
         function renderMonthlyChart() {
@@ -351,7 +352,7 @@
                     datasets: [
                         {
                             label: 'Weight (MT)',
-                            data: weightData.map(v => Math.round(v)),
+                            data: weightData.map(v => Number(v.toFixed(4))),
                             backgroundColor: 'rgba(79, 70, 229, 0.75)',
                             borderColor: '#4f46e5',
                             borderWidth: 1,
@@ -392,7 +393,7 @@
             });
 
             const labels = Object.keys(cmdaMap);
-            const data = Object.values(cmdaMap).map(v => Math.round(v));
+            const data = Object.values(cmdaMap).map(v => Number(v.toFixed(4)));
 
             commodityChartInstance = new Chart(ctx, {
                 type: 'doughnut',
@@ -413,7 +414,7 @@
 
             const sortedStations = Object.entries(stnMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
             const labels = sortedStations.map(item => item[0]);
-            const data = sortedStations.map(item => Math.round(item[1]));
+            const data = sortedStations.map(item => Number(item[1].toFixed(4)));
 
             stationChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -435,7 +436,7 @@
                     { data: 'Month' },
                     { data: 'Station' },
                     { data: 'Commodity' },
-                    { data: 'Weight', render: $.fn.dataTable.render.number(',', '.', 2) },
+                    { data: 'Weight', render: $.fn.dataTable.render.number(',', '.', 4) },
                     { data: 'NTKM', render: $.fn.dataTable.render.number(',', '.', 0) },
                     { data: 'Wagons', render: $.fn.dataTable.render.number(',', '.', 0) }
                 ],
